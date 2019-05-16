@@ -7,12 +7,19 @@
 //
 
 import UIKit
+import RxSwift
 
 class ViewController: UIViewController {
 
+    var disposeBag: DisposeBag? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        disposeBag = DisposeBag()
+        
+        let barcode = "60255748262"
+        
     }
 
 

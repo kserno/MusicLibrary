@@ -1,0 +1,6 @@
+framework module Pods_ProjektVyvojMobilnichAplikaci {
+  umbrella header "Pods-ProjektVyvojMobilnichAplikaci-umbrella.h"
+
+  export *
+  module * { export * }
+}

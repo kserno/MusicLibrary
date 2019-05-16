@@ -23,6 +23,8 @@ class ArSceneViewController: UIViewController {
     
     var camera: ARCamera? = nil
     
+    var arAlbumViewController: ARAlbumViewController? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -86,16 +88,9 @@ class ArSceneViewController: UIViewController {
     }
     
    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func navigateDetail() {
+        performSegue(withIdentifier: "AlbumSegue", sender: nil)
     }
-    */
-
 }
 
 extension ArSceneViewController: ARSCNViewDelegate {
@@ -113,32 +108,21 @@ extension ArSceneViewController: ARSCNViewDelegate {
                 return node
             }
             
-            let anchorPosition = anchor.transform.columns.3
-            let cameraPosition = camera!.transform.columns.3
-            
-            /*let distance = length(cameraPosition - anchorPosition)
-            
-            let screenRect = UIScreen.main.bounds
-            let screenWidth = screenRect.size.width
-            let screenHeight = screenRect.size.height
-            
-            let ratioWidth = qrRect?.width / screenWidth
-            let ratioHeight = qrRect?.height / screenHeight
-            
-            */
-            
-            
             let plane = SCNPlane(
-                width: 0.1,
-                height: 0.1
+                width: 0.5,
+                height: 0.5
             )
             
+            if (arAlbumViewController == nil) {
+                arAlbumViewController = ARAlbumViewController()
+                arAlbumViewController?.arController = self
+            }
+            
         
-            plane.firstMaterial?.diffuse.contents = UIColor.red
+            plane.firstMaterial?.diffuse.contents = arAlbumViewController?.view
             let planeNode = SCNNode(geometry: plane)
             planeNode.transform = SCNMatrix4(anchor.transform)
             
-
             node.addChildNode(planeNode)
         }
         return node
