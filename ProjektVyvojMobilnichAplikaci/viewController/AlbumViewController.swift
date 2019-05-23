@@ -12,6 +12,7 @@ import Kingfisher
 
 class AlbumViewController: UITableViewController {
 
+    @IBOutlet var viewLoading: UIView!
     @IBOutlet var lbNotes: UILabel!
     @IBOutlet var btArtist: UIButton!
     @IBOutlet var lbYear: UILabel!
@@ -25,6 +26,9 @@ class AlbumViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.tableFooterView = UIView() // hides lines for empty table
+        self.view.isUserInteractionEnabled = true
+    
         if (masterId != nil) {
             DiscogsApi().getMasters(id: masterId!)
                 .observeOn(MainScheduler.instance)
@@ -33,6 +37,7 @@ class AlbumViewController: UITableViewController {
                     self.model = model
                     self.updateView()
                     self.tableView.reloadData()
+                    self.viewLoading.isHidden = true
                 }, onError: {
                     error in
                     print(error)

@@ -21,7 +21,7 @@ class ArSceneViewController: UIViewController {
     var latestFrame: ARFrame? = nil
     var qrRect: CGRect? = nil
     
-    var camera: ARCamera? = nil
+    var lastBarcode: String? = nil
     
     var arAlbumViewController: ARAlbumViewController? = nil
     
@@ -54,6 +54,7 @@ class ArSceneViewController: UIViewController {
                 return
             }
             print(payload)
+            lastBarcode = payload
             // Get the bounding box for the bar code and find the center
             var rect = result.boundingBox
             qrRect = rect
@@ -88,9 +89,23 @@ class ArSceneViewController: UIViewController {
     }
     
    
+    
     func navigateDetail() {
-        performSegue(withIdentifier: "AlbumSegue", sender: nil)
+        performSegue(withIdentifier: "AlbumSegue", sender: self)
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if (detectedBarcodeAnchor != nil) {
+            sceneView.session.remove(anchor: detectedBarcodeAnchor!)
+            sceneView.session.pause()
+        }
+        //sceneView.session.pause() not working
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+    }
+
 }
 
 extension ArSceneViewController: ARSCNViewDelegate {
@@ -109,13 +124,14 @@ extension ArSceneViewController: ARSCNViewDelegate {
             }
             
             let plane = SCNPlane(
-                width: 0.5,
+                width: 0.3,
                 height: 0.5
             )
             
             if (arAlbumViewController == nil) {
                 arAlbumViewController = ARAlbumViewController()
                 arAlbumViewController?.arController = self
+                arAlbumViewController?.barcode = lastBarcode
             }
             
         
@@ -133,7 +149,6 @@ extension ArSceneViewController: ARSCNViewDelegate {
 extension ArSceneViewController: ARSessionDelegate {
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        camera = frame.camera
         latestFrame = frame
         
         DispatchQueue.global(qos: .userInitiated).async {

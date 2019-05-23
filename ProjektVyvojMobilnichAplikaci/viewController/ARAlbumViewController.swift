@@ -20,19 +20,49 @@ class ARAlbumViewController: UIViewController {
         super.viewDidLoad()
 
         
+        updateBarcode(barcode: barcode)
         // Do any additional setup after loading the view.
-        DiscogsApi().searchByBarcode(barcode: barcode!)
-            .observeOn(MainScheduler.instance)
-            .subscribe(onSuccess: {
-                model in
-                self.createView(model: model)
-            }, onError: {
-                error in
-                print(error)
-            }).disposed(by: disposeBag)
         
     }
     
+    func updateBarcode(barcode: String?) {
+        self.barcode = barcode
+        if (barcode != nil) {
+            /*DispatchQueue.main.async {
+               // self.startLoading()
+            }*/ 
+            DiscogsApi().searchByBarcode(barcode: barcode!)
+                .observeOn(MainScheduler.instance)
+                .subscribe(onSuccess: {
+                    model in
+                    self.createView(model: model)
+                }, onError: {
+                    error in
+                    print(error)
+                }).disposed(by: disposeBag)
+        }
+    }
+    
+    private func startLoading() {
+        for view in self.view.subviews {
+            view.removeFromSuperview()
+        }
+        
+        let width = view.frame.width
+        let height = view.frame.height
+        
+        let spinnerSize = CGFloat(40)
+        
+        let spinner = UIActivityIndicatorView()
+        spinner.frame = CGRect(x: width / 2 - spinnerSize / 2, y: height/2 - spinnerSize / 2,
+                               width: spinnerSize, height: spinnerSize)
+        
+        view.addSubview(spinner)
+        spinner.startAnimating()
+    
+        
+
+    }
     
     func createView(model: AlbumModel) {
         
@@ -52,13 +82,16 @@ class ARAlbumViewController: UIViewController {
         let lbTitle = UILabel()
         let width = Double(view.frame.width)
         lbTitle.frame = CGRect(x: leftPadding,y: 16, width: width - 2 * leftPadding, height: 80)
-        lbTitle.text = "Title"
+        lbTitle.text = model.title
         view.addSubview(lbTitle)
         
         let lbArtist = UILabel()
         lbArtist.frame = CGRect(x: leftPadding, y: 72, width: width - 2 * leftPadding, height: 40)
-        lbArtist.text = "Artist"
+        lbArtist.text = model.artistName
         view.addSubview(lbArtist)
+        
+        let ivUrl = UIImageView()
+        
         
         let btDetail = UIButton()
         btDetail.backgroundColor = UIColor.black
@@ -77,6 +110,7 @@ class ARAlbumViewController: UIViewController {
     }
     
 
+    
     /*
     // MARK: - Navigation
 

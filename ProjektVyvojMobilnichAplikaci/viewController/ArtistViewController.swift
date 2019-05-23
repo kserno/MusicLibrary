@@ -17,9 +17,9 @@ class ArtistViewController: UITableViewController {
     private var model: ArtistModel? = nil
     private var releases: [ReleaseModel] = [ReleaseModel]()
     
+    @IBOutlet var viewLoading: UIView!
     @IBOutlet var ivArtistTop: NSLayoutConstraint!
     @IBOutlet var ivArtistHeight: NSLayoutConstraint!
-    
     
     private let disposeBag = DisposeBag()
     
@@ -31,6 +31,7 @@ class ArtistViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.tableFooterView = UIView() // hides lines for empty table
 
         if (id != nil) {
             DiscogsApi().getArtist(id: id!)
@@ -39,7 +40,9 @@ class ArtistViewController: UITableViewController {
                     model in
                     self.model = model
                     self.updateView()
+                    self.viewLoading.isHidden = true
                 }, onError: {
+                
                     error in
                     print(error)
                 }).disposed(by: disposeBag)
