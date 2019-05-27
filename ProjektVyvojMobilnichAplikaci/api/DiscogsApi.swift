@@ -20,6 +20,7 @@ class DiscogsApi {
                 emitter(.error(NetworkError.runtimeError("error")))
                 return Disposables.create()
             }
+            print(url)
             
             let request = Alamofire.request(url,
                               method: .get,
@@ -69,6 +70,7 @@ class DiscogsApi {
                 return Disposables.create()
             }
             
+            print(url)
             let request = Alamofire.request(url,
                               method: .get,
                               parameters: ["token": self.API_TOKEN])

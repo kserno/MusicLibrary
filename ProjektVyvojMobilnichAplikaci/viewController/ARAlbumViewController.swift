@@ -15,6 +15,7 @@ class ARAlbumViewController: UIViewController {
     
     var arController: ArSceneViewController? = nil
     var barcode: String? = nil
+    var model: AlbumModel? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +36,7 @@ class ARAlbumViewController: UIViewController {
                 .observeOn(MainScheduler.instance)
                 .subscribe(onSuccess: {
                     model in
+                    self.model = model
                     self.createView(model: model)
                 }, onError: {
                     error in
@@ -79,18 +81,27 @@ class ARAlbumViewController: UIViewController {
             rightPadding = Double((window?.safeAreaInsets.right)!)
         }*/
         
-        let lbTitle = UILabel()
         let width = Double(view.frame.width)
+        let ivCover = UIImageView()
+        ivCover.frame = CGRect(x:0, y:0, width: width, height:300)
+        
+        print(model.thumbUrl)
+        ivCover.kf.setImage(with: URL(string: model.thumbUrl))
+        
+        let lbTitle = UILabel()
+        
         lbTitle.frame = CGRect(x: leftPadding,y: 16, width: width - 2 * leftPadding, height: 80)
         lbTitle.text = model.title
         view.addSubview(lbTitle)
         
         let lbArtist = UILabel()
         lbArtist.frame = CGRect(x: leftPadding, y: 72, width: width - 2 * leftPadding, height: 40)
-        lbArtist.text = model.artistName
+        lbArtist.text = model.genres.joined(separator: " / ")
         view.addSubview(lbArtist)
         
-        let ivUrl = UIImageView()
+        print(model.artistName)
+        print(model.title)
+        
         
         
         let btDetail = UIButton()
@@ -106,9 +117,12 @@ class ARAlbumViewController: UIViewController {
     }
     
     @objc func detailClick() {
-        arController?.navigateDetail()
+        arController?.navigateDetail(masterId: model?.id)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        print("ard dis")
+    }
 
     
     /*

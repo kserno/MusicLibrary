@@ -28,6 +28,7 @@ class ArtistViewController: UITableViewController {
     @IBOutlet var lbNote: UILabel!
     
     var originalHeight: CGFloat!
+    var originalTop: CGFloat!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +41,7 @@ class ArtistViewController: UITableViewController {
                     model in
                     self.model = model
                     self.updateView()
-                    self.viewLoading.isHidden = true
                 }, onError: {
-                
                     error in
                     print(error)
                 }).disposed(by: disposeBag)
@@ -53,6 +52,7 @@ class ArtistViewController: UITableViewController {
                     result in
                     self.releases = result
                     self.tableView.reloadData()
+                    self.viewLoading.isHidden = true
                 }, onError: {
                     error in
                     print(error)
@@ -62,7 +62,7 @@ class ArtistViewController: UITableViewController {
         ivArtist.clipsToBounds = true
         
         originalHeight = ivArtistHeight.constant
-
+        originalTop = ivArtistTop.constant
 
         // Do any additional setup after loading the view.
         
@@ -71,14 +71,14 @@ class ArtistViewController: UITableViewController {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset.y
         
-        let defaultTop: CGFloat = CGFloat(0)
+        let defaultTop: CGFloat = originalTop
         
         var currentTop: CGFloat = defaultTop
         
         if offset < 0{
             currentTop = offset
             ivArtistHeight.constant = originalHeight - offset
-        }else{
+        } else{
             ivArtistHeight.constant = originalHeight
         }
         

@@ -38,6 +38,7 @@ class ArSceneViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
+    
         startBarcodeScanning()
     }
     
@@ -88,22 +89,29 @@ class ArSceneViewController: UIViewController {
         }
     }
     
-   
+
     
-    func navigateDetail() {
-        performSegue(withIdentifier: "AlbumSegue", sender: self)
+    func navigateDetail(masterId: Int?) {
+        performSegue(withIdentifier: "AlbumSegue", sender: masterId)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         if (detectedBarcodeAnchor != nil) {
             sceneView.session.remove(anchor: detectedBarcodeAnchor!)
             sceneView.session.pause()
+            self.arAlbumViewController?.removeFromParent()
+
+        
         }
         //sceneView.session.pause() not working
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        if (segue.identifier == "AlbumSegue") {
+            if let viewController = segue.destination as? AlbumViewController {
+                viewController.masterId = sender as? Int
+            }
+        }
     }
 
 }
@@ -111,7 +119,11 @@ class ArSceneViewController: UIViewController {
 extension ArSceneViewController: ARSCNViewDelegate {
 
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-        print(anchors[0])
+        
+    }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+    
     }
    
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
@@ -124,8 +136,8 @@ extension ArSceneViewController: ARSCNViewDelegate {
             }
             
             let plane = SCNPlane(
-                width: 0.3,
-                height: 0.5
+                width: 0.2,
+                height: 0.3
             )
             
             if (arAlbumViewController == nil) {

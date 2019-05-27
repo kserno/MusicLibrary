@@ -19,7 +19,7 @@ class AlbumViewController: UITableViewController {
     @IBOutlet var lbGenre: UILabel!
     @IBOutlet var lbName: UILabel!
     @IBOutlet var ivThumb: UIImageView!
-    var masterId: Int? = 64290 // TODO set to nil
+    var masterId: Int? = 701407 // TODO set to nil
     private var disposeBag: DisposeBag = DisposeBag()
     private var model: MasterModel? = nil
     
@@ -27,7 +27,7 @@ class AlbumViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.tableFooterView = UIView() // hides lines for empty table
-        self.view.isUserInteractionEnabled = true
+        
     
         if (masterId != nil) {
             DiscogsApi().getMasters(id: masterId!)
@@ -69,6 +69,7 @@ class AlbumViewController: UITableViewController {
         if (model == nil) {
             return
         }
+        self.title = model?.title
         lbName.text = model?.title
         lbYear.text = String(model!.year)
         lbGenre.text = model?.genres.joined(separator: "/")
